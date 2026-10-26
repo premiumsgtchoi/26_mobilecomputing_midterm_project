@@ -4,7 +4,7 @@ from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
 
 from artmate import config
 from artmate.llm import get_chat_model
-from artmate.prompts.base import BASE_PROMPT
+from artmate.prompts import build_system_prompt
 
 st.set_page_config(page_title="아트메이트", page_icon="🎨")
 
@@ -20,6 +20,8 @@ if "messages" not in st.session_state:
 # 사이드바
 with st.sidebar:
     st.title("🎨 아트메이트")
+    # 학교급을 바꾸면 수준이 섞이지 않도록 대화를 자동 초기화
+    st.radio("학교급", ["초등", "중등"], key="school_level", horizontal=True, on_change=reset_chat)
     st.button("대화 초기화", on_click=reset_chat, width="stretch")
 
 # 메인
@@ -41,7 +43,8 @@ if prompt := st.chat_input("궁금한 점을 적어 보세요", disabled=not con
 
     with st.chat_message("assistant"):
         try:
-            llm_messages = [SystemMessage(BASE_PROMPT)] + st.session_state.lc_history
+            system = SystemMessage(build_system_prompt(st.session_state.school_level))
+            llm_messages = [system] + st.session_state.lc_history
             answer = st.write_stream(
                 chunk.text for chunk in get_chat_model().stream(llm_messages)
             )
