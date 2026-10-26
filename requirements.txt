@@ -1,0 +1,29 @@
+# UI
+streamlit
+
+# LLM 연동
+langchain
+langchain-google-genai
+langgraph
+
+# RAG
+chromadb
+langchain-chroma
+pymupdf
+
+# 웹 검색
+langchain-tavily
+
+# 로컬 sLLM (M2)
+langchain-ollama
+
+# 이미지 처리
+pillow
+scikit-learn
+
+# 설정
+python-dotenv
+pydantic
+
+# 테스트
+pytest

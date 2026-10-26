@@ -28,13 +28,13 @@ tasks.md의 T○를 진행해줘. spec.md와 design.md의 관련 절을 먼저 �
 ### T0. 환경 준비 `사용자 작업 포함`
 - [ ] (사용자) Google AI Studio에서 Gemini API 키, 타빌리 API 키 발급
 - [ ] (사용자) NCIC에서 2022 개정 미술과 교육과정 PDF를 내려받아 `data/raw/`에 배치
-- [ ] design.md §3 디렉터리 구조 생성, `.gitignore`, `.env.example`, `requirements.txt` 작성
-- [ ] venv 생성 및 패키지 설치
-- [ ] `artmate/config.py`, `artmate/llm.py` 작성, Gemini 호출 테스트
+- [x] design.md §3 디렉터리 구조 생성, `.gitignore`, `.env.example`, `requirements.txt` 작성
+- [x] venv 생성 및 패키지 설치
+- [x] `artmate/config.py`, `artmate/llm.py` 작성, Gemini 호출 테스트
 
 **확인 포인트**
-- [ ] 터미널에서 Gemini가 한 문장으로 응답한다.
-- [ ] 임베딩 호출이 벡터를 반환한다.
+- [x] 터미널에서 Gemini가 한 문장으로 응답한다.
+- [x] 임베딩 호출이 벡터를 반환한다.
 
 ---
 
