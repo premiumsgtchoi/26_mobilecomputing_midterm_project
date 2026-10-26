@@ -13,6 +13,15 @@
 - **파일 삭제 전 반드시 확인**을 받는다.
 - **환경·언어**: Windows, venv, PowerShell 기준 명령. 응답과 코드 주석은 한국어로 간결하게.
 
+- **태스크 완료 보고**: 태스크를 끝내면 아래 형식으로 보고한다.
+  ## T○ 결과 보고
+  - 변경 파일:
+  - 구현 요약(3줄 이내):
+  - 설계와 다르게 한 점·가정:
+  - 실행 방법:
+  - 확인 포인트별 점검 방법:
+  - 사용자가 해야 할 일:
+
 ---
 
 Behavioral guidelines to reduce common LLM coding mistakes. Merge with project-specific instructions as needed.
