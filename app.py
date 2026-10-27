@@ -123,6 +123,8 @@ with st.sidebar:
                 args = ", ".join(f"{k}={v!r}" for k, v in call["args"].items())
                 st.markdown(f"🔧 `{call['tool']}`")
                 st.caption(f"인자: {args}")
-                st.caption("결과: " + (", ".join(call["results"]) or "없음"))
+                # 결과는 한 줄에 하나씩 (웹 검색은 [신뢰 도메인]/[일반 재검색] 구분과 URL)
+                results = [r if isinstance(r, str) else f"[{r['scope']}] {r['url']}" for r in call["results"]]
+                st.caption("결과:  \n" + ("  \n".join(results) or "없음"))
             if turn["error"]:
                 st.error(turn["error"])

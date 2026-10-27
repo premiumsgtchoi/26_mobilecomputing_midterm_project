@@ -7,8 +7,9 @@ from artmate import config
 from artmate.llm import get_chat_model
 from artmate.prompts import build_system_prompt
 from artmate.tools.curriculum import search_curriculum
+from artmate.tools.web import format_sources, web_search
 
-TOOLS = {t.name: t for t in [search_curriculum]}
+TOOLS = {t.name: t for t in [search_curriculum, web_search]}
 
 
 def stream_answer(history: list[BaseMessage], school_level: str, calls: list[dict]) -> Iterator[str]:
@@ -28,6 +29,10 @@ def stream_answer(history: list[BaseMessage], school_level: str, calls: list[dic
             if chunk.text:
                 yield chunk.text
         if not response.tool_calls:
+            # 웹 검색 출처는 모델 대신 코드가 답 끝에 붙인다 (design.md §6)
+            urls = [r["url"] for c in calls if c["tool"] == web_search.name for r in c["results"] if r["url"]]
+            if urls:
+                yield "\n\n" + format_sources(urls)
             return
 
         messages.append(response)
