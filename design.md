@@ -3,7 +3,7 @@
 | 항목 | 내용 |
 |---|---|
 | 대응 명세 | `spec.md` v0.2 |
-| 문서 버전 | v0.2 (초안) |
+| 문서 버전 | v0.3 (초안) |
 | 작성일 | 2026-10-26 |
 | 상태 | 검토 중 |
 
@@ -40,7 +40,7 @@
 | UI | `streamlit` | 채팅 UI, 사이드바, 스트림 출력 |
 | LLM 연동 | `langchain`, `langchain-google-genai` | `ChatGoogleGenerativeAI` |
 | 그래프 | `langgraph` | M2 |
-| 채팅 모델 | Gemini Flash 계열 stable 모델 (기본값 `gemini-3.5-flash`) | `.env`의 `GEMINI_MODEL`로 교체 가능 |
+| 채팅 모델 | Gemini Flash-Lite 계열 stable 모델 (기본값 `gemini-3.5-flash-lite`) | `.env`의 `GEMINI_MODEL`로 교체 가능 (`gemini-3.5-flash` 등) |
 | 임베딩 | `gemini-embedding-001` | `GoogleGenerativeAIEmbeddings` |
 | 벡터 DB | `chromadb`, `langchain-chroma` | 로컬 저장 |
 | PDF 처리 | `pymupdf` | 교육과정 PDF 텍스트 추출 |
@@ -50,7 +50,7 @@
 | 설정 | `python-dotenv`, `pydantic` | 환경 변수, 구조화 출력 |
 | 테스트 | `pytest` | 정규식, 청킹 등 결정적 로직만 |
 
-**모델 선정 근거 (OI-01)**: 이 프로젝트는 응답 속도와 비용이 중요하고, 이미지 입력과 도구 호출을 모두 지원해야 하므로 Flash 계열을 사용한다. 모델명은 설정값으로 분리해 두고, 구현 첫 단계에서 API 호출이 정상인지 확인한다. 무료 사용량 제한에 걸리면 Flash-Lite 계열로 교체한다.
+**모델 선정 근거 (OI-01)**: 이 프로젝트는 응답 속도와 비용이 중요하고, 이미지 입력과 도구 호출을 모두 지원해야 하므로 Flash 계열을 사용한다. 개발 중에는 무료 사용량 한도(Flash 하루 약 20회)로 점검이 막혀 **Flash-Lite를 기본값**으로 쓰고, 응답 품질 비교나 시연 때는 `.env`에서 `gemini-3.5-flash`로 바꿀 수 있다. 모델명은 설정값으로 분리해 둔다.
 
 ---
 
@@ -100,7 +100,7 @@ artmate/
 # .env.example
 GOOGLE_API_KEY=
 TAVILY_API_KEY=
-GEMINI_MODEL=gemini-3.5-flash
+GEMINI_MODEL=gemini-3.5-flash-lite
 EMBEDDING_MODEL=gemini-embedding-001
 OLLAMA_MODEL=          # M2에서 확정
 ```
@@ -389,7 +389,7 @@ LLM 응답 품질은 자동 테스트하지 않는다. 각 단계 종료 시 관
 
 | ID | 내용 | 결정 |
 |---|---|---|
-| OI-01 | Gemini 모델 | Flash 계열 stable, 기본 `gemini-3.5-flash`, 설정으로 교체 가능 (§2) |
+| OI-01 | Gemini 모델 | Flash 계열 stable, 개발 기본 `gemini-3.5-flash-lite`, 설정으로 교체 가능 (§2) |
 | OI-02 | 로컬 sLLM | 3개 계열 후보, S7 테스트로 M2 첫 단계에서 선정 (§10.3) |
 | OI-03 | 청킹 | 성취기준 단위 + 일반 절 단위 (§5.2) |
 | OI-04 | 신뢰 도메인 | §6 목록으로 시작, 구현 중 조정 |
@@ -404,3 +404,4 @@ LLM 응답 품질은 자동 테스트하지 않는다. 각 단계 종료 시 관
 |---|---|---|
 | 2026-10-26 | v0.1 | 초안 작성 |
 | 2026-10-26 | v0.2 | §7 base에 서식 규칙 추가: `**'명암'**이`처럼 따옴표가 든 굵게 표시 뒤에 조사가 붙으면 마크다운 굵게가 깨진다 |
+| 2026-10-26 | v0.3 | §2·§4·§14 개발 기본 모델을 `gemini-3.5-flash` → `gemini-3.5-flash-lite`로 변경: Flash 무료 한도(하루 약 20회)가 T2 점검 중 소진되어 개발·점검이 막혔다 |

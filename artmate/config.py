@@ -12,7 +12,7 @@ GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY", "")
 TAVILY_API_KEY = os.getenv("TAVILY_API_KEY", "")
 
 # 모델
-GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-3.5-flash")
+GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-3.5-flash-lite")
 EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "gemini-embedding-001")
 OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "")
 
