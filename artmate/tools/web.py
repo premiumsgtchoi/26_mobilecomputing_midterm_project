@@ -71,5 +71,8 @@ def web_search(query: str) -> tuple[str, list[dict]]:
 
 
 def format_sources(urls: list[str]) -> str:
-    """답 끝에 붙일 출처 줄. 같은 URL은 한 번만 쓴다."""
-    return "출처: " + ", ".join(f"[{site_name(u)}]({u})" for u in dict.fromkeys(urls))
+    """답 끝에 붙일 출처 줄. 같은 사이트는 처음 나온 링크 하나만 쓴다."""
+    first = {}
+    for u in urls:
+        first.setdefault(site_name(u), u)
+    return "출처: " + ", ".join(f"[{site}]({u})" for site, u in first.items())

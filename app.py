@@ -2,7 +2,7 @@
 import streamlit as st
 from langchain_core.messages import AIMessage, HumanMessage
 
-from artmate import config, images
+from artmate import config, images, quiz
 from artmate.agent import stream_answer
 from artmate.tools.curriculum import index_exists
 
@@ -16,6 +16,7 @@ def reset_chat():
     st.session_state.pending_image = None  # 다음 메시지에 첨부할 이미지
     st.session_state.image_error = ""
     st.session_state.trace = []  # 에이전트 동작 보기용 턴별 기록
+    st.session_state.quiz = None
     # 업로더 값은 직접 지울 수 없어 키를 바꿔 새 위젯으로 만든다
     st.session_state.uploader_key = st.session_state.get("uploader_key", 0) + 1
 
@@ -41,6 +42,25 @@ def show_message(msg):
         st.markdown(msg["content"])
 
 
+def show_quiz(q, quiz_id):
+    """고르는 즉시 정답 여부와 해설을 보여 준다."""
+    st.subheader("확인 퀴즈")
+    for i, item in enumerate(q.items):
+        choice = st.radio(
+            f"{i + 1}. {item.question}",
+            range(len(item.options)),
+            format_func=lambda j, opts=item.options: opts[j],
+            index=None,
+            key=f"quiz_{quiz_id}_{i}",  # 새 퀴즈마다 풀이를 비운다
+        )
+        if choice is None:
+            continue
+        if choice == item.answer_index:
+            st.success(f"정답이에요! {item.explanation}")
+        else:
+            st.error(f"아쉬워요. 정답은 '{item.options[item.answer_index]}'예요. {item.explanation}")
+
+
 if "messages" not in st.session_state:
     reset_chat()
 
@@ -61,6 +81,24 @@ with st.sidebar:
         st.error(st.session_state.image_error)
     elif st.session_state.pending_image is not None:
         st.caption("다음 질문에 이 이미지가 함께 전달돼요.")
+
+    quiz_notice = ""
+    if st.button("확인 퀴즈 만들기", width="stretch", disabled=not config.GOOGLE_API_KEY):
+        if not quiz.enough_conversation(st.session_state.messages):
+            # 대화가 짧으면 API를 호출하지 않고 안내만 (design.md §8.4)
+            quiz_notice = "조금 더 이야기 나눈 뒤 퀴즈를 만들어 볼까요?"
+        else:
+            with st.spinner("퀴즈를 만들고 있어요..."):
+                try:
+                    st.session_state.quiz = quiz.make_quiz(
+                        st.session_state.messages, st.session_state.school_level
+                    )
+                    st.session_state.quiz_id = st.session_state.get("quiz_id", 0) + 1
+                except Exception as e:
+                    st.session_state.trace.append(
+                        {"question": "확인 퀴즈 만들기", "calls": [], "error": f"{type(e).__name__}: {e}"[:300]}
+                    )
+                    quiz_notice = "지금은 퀴즈를 만들 수 없어요. 잠시 뒤 다시 눌러 주세요."
     st.button("대화 초기화", on_click=reset_chat, width="stretch")
 
 # 메인
@@ -74,6 +112,11 @@ if not index_exists():
 
 for msg in st.session_state.messages:
     show_message(msg)
+
+if quiz_notice:
+    st.info(quiz_notice)
+if st.session_state.quiz is not None:
+    show_quiz(st.session_state.quiz, st.session_state.quiz_id)
 
 if prompt := st.chat_input("궁금한 점을 적어 보세요", disabled=not config.GOOGLE_API_KEY):
     # 업로드한 이미지는 바로 다음 메시지 1회에만 첨부 (design.md §8.3)
