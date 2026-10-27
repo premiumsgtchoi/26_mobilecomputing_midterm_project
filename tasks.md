@@ -2,7 +2,7 @@
 
 | 항목 | 내용 |
 |---|---|
-| 대응 문서 | `spec.md` v0.2, `design.md` v0.4 |
+| 대응 문서 | `spec.md` v0.2, `design.md` v0.5 |
 | 문서 버전 | v0.2 |
 | 작성일 | 2026-10-26 |
 
@@ -74,27 +74,27 @@ tasks.md의 T○를 진행해줘. spec.md와 design.md의 관련 절을 먼저 �
 ---
 
 ### T4. 교육과정 인덱스 구축 · design §5
-- [ ] `scripts/build_index.py`: PDF 텍스트 추출 → 성취기준 단위 청킹 → 메타데이터 부여 → Chroma 저장
-- [ ] `data/processed/chunks.json` 저장
-- [ ] `tests/test_chunking.py`: 코드 추출과 학교급·영역 판정 테스트
+- [x] `scripts/build_index.py`: PDF 텍스트 추출 → 성취기준 단위 청킹 → 메타데이터 부여 → Chroma 저장
+- [x] `data/processed/chunks.json` 저장
+- [x] `tests/test_chunking.py`: 코드 추출과 학교급·영역 판정 테스트
 
 **확인 포인트**
-- [ ] `pytest` 통과
-- [ ] `chunks.json`에서 초등(6미)·중등(9미) 성취기준 수를 확인한다.
-- [ ] **영역 번호(01·02·03)와 영역명 대응을 PDF와 대조해 확정**하고 design.md를 갱신한다.
+- [x] `pytest` 통과
+- [x] `chunks.json`에서 초등(6미)·중등(9미) 성취기준 수를 확인한다.
+- [x] **영역 번호(01·02·03)와 영역명 대응을 PDF와 대조해 확정**하고 design.md를 갱신한다.
 
 ---
 
 ### T5. 교육과정 검색 도구와 도구 호출 루프 · FR-06, FR-17
-- [ ] `tools/curriculum.py`: `search_curriculum` (학교급은 세션 상태에서 주입)
-- [ ] `artmate/agent.py`: `bind_tools` + 도구 호출 루프(최대 3회) + 최종 응답 스트림
-- [ ] `app.py`를 `agent.py` 호출 구조로 전환
-- [ ] 사이드바 "에이전트 동작 보기": 호출된 도구, 인자, 결과 요약 표시
+- [x] `tools/curriculum.py`: `search_curriculum` (학교급은 세션 상태에서 주입)
+- [x] `artmate/agent.py`: `bind_tools` + 도구 호출 루프(최대 3회) + 최종 응답 스트림
+- [x] `app.py`를 `agent.py` 호출 구조로 전환
+- [x] 사이드바 "에이전트 동작 보기": 호출된 도구, 인자, 결과 요약 표시
 
 **확인 포인트**
-- [ ] 미술 질문을 하면 동작 보기 패널에 `search_curriculum` 호출이 표시된다.
-- [ ] 중등 모드에서 초등 성취기준이 검색되지 않는다. (S8)
-- [ ] 학생 화면에 성취기준 코드가 노출되지 않는다. (P2)
+- [x] 미술 질문을 하면 동작 보기 패널에 `search_curriculum` 호출이 표시된다.
+- [x] 중등 모드에서 초등 성취기준이 검색되지 않는다. (S8)
+- [x] 학생 화면에 성취기준 코드가 노출되지 않는다. (P2)
 
 ---
 
