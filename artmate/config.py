@@ -21,6 +21,9 @@ DATA_DIR = ROOT_DIR / "data"
 RAW_DIR = DATA_DIR / "raw"
 PROCESSED_DIR = DATA_DIR / "processed"
 CHROMA_DIR = DATA_DIR / "chroma"
+CURRICULUM_PDF = RAW_DIR / "교육과정.pdf"
+CHUNKS_JSON = PROCESSED_DIR / "chunks.json"
+CHROMA_COLLECTION = "curriculum"
 
 # 상수
 MAX_IMAGE_MB = 5
