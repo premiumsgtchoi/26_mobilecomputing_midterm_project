@@ -47,6 +47,7 @@ def web_search(query: str) -> tuple[str, list[dict]]:
     """작가, 작품, 미술사·시대 배경 같은 사실 정보를 신뢰할 수 있는 사이트에서 검색한다.
     미술 개념·학습 내용(명암, 구도, 감상 방법 등)은 이 도구가 아니라 search_curriculum을 쓴다.
 
+    이미 알고 있는 사실이라도 이 도구로 확인한 뒤 답한다.
     출처는 시스템이 답 끝에 자동으로 붙이므로 답에 쓰지 않는다."""
     if not config.TAVILY_API_KEY:
         return "웹 검색 실패: 확인된 정보만으로 답할 것", [{"scope": "검색 실패: TAVILY_API_KEY 없음", "url": ""}]

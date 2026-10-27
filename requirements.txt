@@ -1,29 +1,25 @@
+# M1에서 직접 사용하는 패키지만 버전 고정 (M2 패키지는 해당 태스크에서 추가)
+
 # UI
-streamlit
+streamlit==1.66.1
 
 # LLM 연동
-langchain
-langchain-google-genai
-langgraph
+langchain-core==1.7.0
+langchain-google-genai==4.4.2
 
 # RAG
-chromadb
-langchain-chroma
-pymupdf
+langchain-chroma==1.1.0
+pymupdf==2.0
 
 # 웹 검색
-langchain-tavily
-
-# 로컬 sLLM (M2)
-langchain-ollama
+langchain-tavily==0.2.18
 
 # 이미지 처리
-pillow
-scikit-learn
+pillow==13.0.0
 
 # 설정
-python-dotenv
-pydantic
+python-dotenv==1.2.4
+pydantic==2.14.1
 
 # 테스트
-pytest
+pytest==9.1.1

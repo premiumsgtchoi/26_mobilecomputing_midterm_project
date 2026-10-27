@@ -1,0 +1,3 @@
+[client]
+# Deploy 버튼 등 개발자 메뉴 숨김 (design.md §11)
+toolbarMode = "viewer"
