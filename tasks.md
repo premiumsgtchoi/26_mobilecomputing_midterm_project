@@ -170,9 +170,9 @@ tasks.md의 T○를 진행해줘. spec.md와 design.md의 관련 절을 먼저 �
 ---
 
 ### T11. 활동별 진행 지침과 영역 주입 · FR-19, FR-06
-- [ ] `prompts/activities.py`: 활동 지침 4개 + 활동 밖 요청 규칙, `build_system_prompt(school_level, activity)` (design §7)
-- [ ] `search_curriculum`: 영역을 학교급처럼 세션에서 주입, 동작 보기에 주입 영역 표시
-- [ ] `prompts/areas.py` 삭제 (사용자 확인 후)
+- [x] `prompts/activities.py`: 활동 지침 4개 + 활동 밖 요청 규칙, `build_system_prompt(school_level, activity)` (design §7)
+- [x] `search_curriculum`: 영역을 학교급처럼 세션에서 주입, 동작 보기에 주입 영역 표시
+- [x] `prompts/areas.py` 삭제 (사용자 확인 후)
 
 **확인 포인트**
 - [ ] 표현 ①에서 주제를 말하면 아이디어를 대신 정하지 않고 경험·감정·장면을 묻는다. (S3)

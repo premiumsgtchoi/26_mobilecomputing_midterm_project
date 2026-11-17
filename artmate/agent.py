@@ -4,6 +4,7 @@ from collections.abc import Iterator
 from langchain_core.messages import BaseMessage, SystemMessage
 
 from artmate import config
+from artmate.activities import ACTIVITIES
 from artmate.llm import get_chat_model
 from artmate.prompts import build_system_prompt
 from artmate.tools.curriculum import search_curriculum
@@ -12,13 +13,15 @@ from artmate.tools.web import format_sources, web_search
 TOOLS = {t.name: t for t in [search_curriculum, web_search]}
 
 
-def stream_answer(history: list[BaseMessage], school_level: str, calls: list[dict]) -> Iterator[str]:
+def stream_answer(
+    history: list[BaseMessage], school_level: str, activity: str, calls: list[dict]
+) -> Iterator[str]:
     """최종 응답 글자를 흘려보낸다. 도구 호출 내역은 calls에 덧붙인다."""
     llm = get_chat_model()
     with_tools = llm.bind_tools(list(TOOLS.values()))
     # 상한에 도달한 마지막 라운드는 도구를 더 부르지 못하게 하고 답을 마무리시킨다
     no_more_tools = llm.bind_tools(list(TOOLS.values()), tool_choice="none")
-    messages = [SystemMessage(build_system_prompt(school_level)), *history]
+    messages = [SystemMessage(build_system_prompt(school_level, activity)), *history]
 
     for round_ in range(config.MAX_TOOL_ROUNDS + 1):
         model = with_tools if round_ < config.MAX_TOOL_ROUNDS else no_more_tools
@@ -39,8 +42,8 @@ def stream_answer(history: list[BaseMessage], school_level: str, calls: list[dic
         for call in response.tool_calls:
             args = call["args"]
             if call["name"] == search_curriculum.name:
-                # 학교급은 모델이 아니라 세션 상태에서 주입 (design.md §6)
-                args = {**args, "school_level": school_level}
+                # 학교급과 활동의 영역은 모델이 아니라 세션 상태에서 주입 (design.md §6)
+                args = {**args, "school_level": school_level, "area": ACTIVITIES[activity].area}
             result = TOOLS[call["name"]].invoke({**call, "args": args})
             messages.append(result)
             calls.append({"tool": call["name"], "args": args, "results": result.artifact})

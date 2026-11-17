@@ -155,7 +155,12 @@ if prompt := st.chat_input("궁금한 점을 적어 보세요", disabled=not con
     with st.chat_message("assistant"):
         try:
             answer = st.write_stream(
-                stream_answer(st.session_state.lc_history, st.session_state.school_level, turn["calls"])
+                stream_answer(
+                    st.session_state.lc_history,
+                    st.session_state.school_level,
+                    st.session_state.activity,
+                    turn["calls"],
+                )
             )
         except Exception as e:
             turn["error"] = f"{type(e).__name__}: {e}"[:300]
