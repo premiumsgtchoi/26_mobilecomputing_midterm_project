@@ -3,15 +3,19 @@ import streamlit as st
 from langchain_core.messages import AIMessage, HumanMessage
 
 from artmate import config, images, quiz
+from artmate.activities import ACTIVITIES
 from artmate.agent import stream_answer
+from artmate.prompts.activities import GREETINGS
 from artmate.tools.curriculum import index_exists
 
 st.set_page_config(page_title="아트메이트", page_icon="🎨")
 
 
 def reset_chat():
-    st.session_state.messages = []  # 화면 표시용
-    st.session_state.lc_history = []  # 모델 전달용
+    # 활동별 첫 안내는 API 없이 고정 문구로 넣고, 모델도 이어받도록 이력에 남긴다 (design.md §8.5)
+    greeting = GREETINGS[st.session_state.activity][st.session_state.school_level]
+    st.session_state.messages = [{"role": "assistant", "content": greeting}]  # 화면 표시용
+    st.session_state.lc_history = [AIMessage(greeting)]  # 모델 전달용
     st.session_state.current_image = None  # 현재 대화의 이미지 (M2 색상 추출용)
     st.session_state.pending_image = None  # 다음 메시지에 첨부할 이미지
     st.session_state.image_error = ""
@@ -61,14 +65,24 @@ def show_quiz(q, quiz_id):
             st.error(f"아쉬워요. 정답은 '{item.options[item.answer_index]}'예요. {item.explanation}")
 
 
+# 첫 안내를 고르려면 위젯보다 먼저 기본값이 있어야 한다
+st.session_state.setdefault("school_level", "초등")
+st.session_state.setdefault("activity", next(iter(ACTIVITIES)))
 if "messages" not in st.session_state:
     reset_chat()
 
 # 사이드바
 with st.sidebar:
     st.title("🎨 아트메이트")
-    # 학교급을 바꾸면 수준이 섞이지 않도록 대화를 자동 초기화
+    # 학교급·활동을 바꾸면 수준과 활동이 섞이지 않도록 대화를 자동 초기화 (영역은 표시하지 않음)
     st.radio("학교급", ["초등", "중등"], key="school_level", horizontal=True, on_change=reset_chat)
+    st.radio(
+        "활동",
+        list(ACTIVITIES),
+        format_func=lambda k: ACTIVITIES[k].label,
+        key="activity",
+        on_change=reset_chat,
+    )
     st.file_uploader(
         f"이미지 올리기 (JPG·PNG, {config.MAX_IMAGE_MB}MB 이하)",
         type=["jpg", "jpeg", "png"],
@@ -103,7 +117,9 @@ with st.sidebar:
 
 # 메인
 st.title("아트메이트")
-st.caption("미술 시간에 함께 생각하고 탐구하는 학습 도우미예요.")
+activity = ACTIVITIES[st.session_state.activity]
+st.subheader(activity.label)
+st.caption(activity.description)
 
 if not config.GOOGLE_API_KEY:
     st.warning(".env 파일에 GOOGLE_API_KEY를 설정한 뒤 다시 실행해 주세요.")
