@@ -4,6 +4,8 @@
 
 ## 1. 설치
 
+가상환경은 PC마다 따로 만듭니다(OneDrive로 공유한 venv는 다른 PC에서 실행되지 않습니다). 예: 연구실 PC는 `venv-lab`.
+
 ```powershell
 python -m venv venv
 .\venv\Scripts\Activate.ps1
@@ -37,4 +39,13 @@ streamlit run app.py
 
 ```powershell
 pytest
+```
+
+## 6. 배포 (Streamlit Community Cloud)
+
+`main`에 푸시하면 자동으로 다시 배포됩니다. API 키는 앱 설정의 Secrets에 넣습니다.
+
+```toml
+GOOGLE_API_KEY = "발급받은 Gemini API 키"
+TAVILY_API_KEY = "발급받은 타빌리 API 키"
 ```

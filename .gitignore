@@ -5,9 +5,11 @@
 venv/
 venv-lab/
 
-# 데이터 (원본 PDF, 벡터 DB)
+# 클라우드 배포용 비밀 키 (Streamlit Cloud Secrets와 같은 형식)
+.streamlit/secrets.toml
+
+# 데이터 (원본 PDF). 벡터 DB(data/chroma/)는 배포용으로 포함
 data/raw/
-data/chroma/
 
 # 파이썬 캐시
 __pycache__/

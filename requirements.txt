@@ -9,6 +9,7 @@ langchain-google-genai==4.4.2
 
 # RAG
 langchain-chroma==1.1.0
+chromadb==1.5.9  # data/chroma 인덱스 파일 형식과 맞춤
 pymupdf==2.0
 
 # 웹 검색

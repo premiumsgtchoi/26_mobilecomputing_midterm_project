@@ -2,8 +2,8 @@
 
 | 항목 | 내용 |
 |---|---|
-| 대응 명세 | `spec.md` v0.3 |
-| 문서 버전 | v1.1 (M1 완료) |
+| 대응 명세 | `spec.md` v0.4 |
+| 문서 버전 | v1.2 (M1 완료) |
 | 작성일 | 2026-10-26 |
 | 상태 | 검토 중 |
 
@@ -42,7 +42,7 @@
 | 그래프 | `langgraph` | M2 |
 | 채팅 모델 | Gemini Flash-Lite 계열 stable 모델 (기본값 `gemini-3.5-flash-lite`) | `.env`의 `GEMINI_MODEL`로 교체 가능 (`gemini-3.5-flash` 등) |
 | 임베딩 | `gemini-embedding-001` | `GoogleGenerativeAIEmbeddings` |
-| 벡터 DB | `chromadb`, `langchain-chroma` | 로컬 저장 |
+| 벡터 DB | `chromadb`, `langchain-chroma` | 파일 저장. 인덱스 파일 형식이 버전에 묶이므로 `chromadb`도 버전 고정 |
 | PDF 처리 | `pymupdf` | 교육과정 PDF 텍스트 추출 |
 | 웹 검색 | `langchain-tavily` | `TavilySearch` |
 | 로컬 sLLM | 올라마 + `langchain-ollama` | M2 |
@@ -70,7 +70,7 @@ artmate/
 ├─ data/
 │  ├─ raw/                     # 교육과정 PDF (사용자가 배치)
 │  ├─ processed/               # 추출 텍스트, 청크 JSON
-│  └─ chroma/                  # 벡터 DB (git 제외)
+│  └─ chroma/                  # 벡터 DB (배포용으로 git 포함)
 ├─ scripts/
 │  └─ build_index.py           # PDF → 청크 → 벡터 DB 구축 (1회 실행)
 ├─ artmate/
@@ -95,7 +95,7 @@ artmate/
    └─ test_guard_regex.py
 ```
 
-`.gitignore`에는 `.env`, `data/chroma/`, `data/raw/`, `venv/`를 포함한다.
+`.gitignore`에는 `.env`, `.streamlit/secrets.toml`, `data/raw/`, `venv/`, `venv-lab/`을 포함한다. 가상환경은 PC마다 따로 만든다(OneDrive로 공유한 venv는 만든 PC의 파이썬 경로를 가리켜 다른 PC에서 실행되지 않음). `data/chroma/`는 클라우드에서 임베딩 API를 다시 호출하지 않도록 저장소에 포함한다(교육과정은 공개 문서, 약 1.4MB).
 
 ---
 
@@ -121,6 +121,13 @@ OLLAMA_MODEL=          # M2에서 확정
 | `WEB_MAX_RESULTS` | 3 | 웹 검색 결과 수 (토큰 절감) |
 | `WEB_MIN_TRUSTED` | 2 | 신뢰 도메인 결과가 이보다 적으면 일반 재검색 1회 |
 | `QUIZ_MIN_QUESTIONS` | 2 | 학생 질문이 이보다 적으면 퀴즈를 만들지 않고 안내만 표시 |
+
+### 4.1 클라우드 배포 (Streamlit Community Cloud)
+- GitHub 저장소 `main` 브랜치의 `app.py`를 배포하며, 푸시할 때마다 자동으로 다시 배포된다.
+- API 키는 앱 설정의 Secrets에 `.env`와 같은 이름(`GOOGLE_API_KEY`, `TAVILY_API_KEY`)으로 넣는다. 스트림릿이 최상위 Secrets를 앱 실행 전에 환경 변수로 올리므로 `config.py`의 `os.getenv`를 그대로 쓴다(코드 변경 없음). `.env`가 없으면 `load_dotenv`는 아무것도 하지 않는다.
+- 검색 인덱스는 저장소의 `data/chroma/`를 그대로 쓴다. 교육과정을 다시 색인하면 `chroma.sqlite3`도 커밋한다.
+- 주소를 아는 누구나 쓰면 Gemini 무료 한도가 소진되므로, 앱 공유 설정에서 볼 수 있는 사람을 지정한다.
+- 대화와 이미지는 지금처럼 세션 메모리에만 있고 파일로 저장하지 않는다(NFR-02 유지).
 
 ---
 
@@ -405,7 +412,7 @@ RTX 2080(VRAM 8GB)에서 실행 가능한 **3B~8B급 4비트 양자화 모델** 
 
 - 학교급을 바꾸면 대화를 초기화할지 묻지 않고 **자동 초기화**한다(수준이 섞이는 것을 방지).
 - 이미지는 JPG/PNG, 5MB 이하만 허용한다.
-- 화면 우측 상단의 Deploy 버튼은 `.streamlit/config.toml`의 `client.toolbarMode = "viewer"`로 숨긴다(클라우드 배포는 범위 외). 다시 실행, 캐시 비우기 같은 개발자 메뉴도 함께 숨겨진다.
+- 화면 우측 상단의 Deploy 버튼은 `.streamlit/config.toml`의 `client.toolbarMode = "viewer"`로 숨긴다(배포는 Streamlit Community Cloud 콘솔에서 하므로 앱 화면에는 필요 없다). 다시 실행, 캐시 비우기 같은 개발자 메뉴도 함께 숨겨진다.
 - **에이전트 동작 보기 패널은 개발·시연용으로 현행 유지한다**(T8 결정). 사이드바에 성취기준 코드와 검색 URL이 보이지만, 채팅 답에는 코드를 노출하지 않으므로 P2 위반으로 보지 않는다. 패널은 기본으로 접혀 있다.
 
 ---
@@ -462,3 +469,4 @@ LLM 응답 품질은 자동 테스트하지 않는다. 각 단계 종료 시 관
 | 2026-10-27 | v0.9 | T8 조정: §7 base에 항상 존댓말 추가(지시문이 반말이라 중등 답이 반말로 나옴), 감상 시작 시 작품명·작가 대신 첫인상부터(정답을 먼저 주면 P1과 어긋남) / §8.4 문항 품질 규칙(정답 암시 금지, 선택지 길이·구체성 균형) / §2 requirements는 사용 패키지만 버전 고정 / §3·§11 `.streamlit/config.toml`로 Deploy 버튼 숨김, README.md 추가 |
 | 2026-10-27 | v1.0 | T8 보완(M1 완료): §7 base 구성 표기를 실제와 맞춤(spec P1~P4·P6 + 규칙, P5는 영역 블록), 의견 요청·결정 위임·반복 요청 시 먼저 답하기, AI 경험 꾸며 말하지 않기 / §6 사실 정보는 알고 있어도 `web_search`로 확인 / §8.4 관찰·감상 중심 출제, 암기형 최대 1개 / §11 세션 키 `image_error`·`uploader_key` 추가, 동작 보기 패널 현행 유지 결정 / §14 OI-05 해결 |
 | 2026-10-27 | v1.1 | T8 보완: §7 학생이 반말을 써도 존댓말 유지, 프롬프트 지시문을 3인칭 평서체로 통일(반말 명령형 지시문이 출력 말투에 영향을 줄 수 있음) |
+| 2026-11-17 | v1.2 | T8-1: §4.1 Streamlit Community Cloud 배포 추가(Secrets로 키 관리, 코드 변경 없음) / §2·§3 `data/chroma/`를 저장소에 포함하고 `chromadb` 버전 고정, PC별 가상환경(`venv-lab/`) git 제외 / §11 Deploy 버튼 숨김 사유 수정 |

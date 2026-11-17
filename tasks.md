@@ -2,8 +2,8 @@
 
 | 항목 | 내용 |
 |---|---|
-| 대응 문서 | `spec.md` v0.3, `design.md` v1.1 |
-| 문서 버전 | v0.4 |
+| 대응 문서 | `spec.md` v0.4, `design.md` v1.2 |
+| 문서 버전 | v0.5 |
 | 작성일 | 2026-10-26 |
 
 ---
@@ -136,6 +136,18 @@ tasks.md의 T○를 진행해줘. spec.md와 design.md의 관련 절을 먼저 �
 
 ---
 
+### T8-1. Streamlit Community Cloud 배포 · NFR-07, NFR-08
+- [x] 문서 갱신(spec NFR-07·08, design §4.1)
+- [x] `.gitignore`: `data/chroma/` 포함, `.streamlit/secrets.toml` 제외 / `requirements.txt`: `chromadb` 버전 고정
+- [ ] (사용자) share.streamlit.io에서 GitHub 저장소 연결, Secrets에 API 키 입력, 공유 범위 설정
+
+**확인 포인트**
+- [ ] 배포 주소에서 첫 화면이 경고 없이 열린다(키·인덱스 인식).
+- [ ] 미술 질문을 하면 답이 오고, 동작 보기에 `search_curriculum` 호출이 표시된다.
+- [ ] 푸시하면 배포 앱에 자동 반영된다.
+
+---
+
 ### T9. 중간 발표 PPT `사용자 작업 중심`
 - [ ] 구성: 프로젝트 개요 → 교육적 설계 원칙 → spec 표(FR·시나리오) → 아키텍처(M1/M2) → 교재 활용 매핑 → 시연 화면 → M2 계획
 
@@ -167,3 +179,4 @@ tasks.md의 T○를 진행해줘. spec.md와 design.md의 관련 절을 먼저 �
 | 2026-10-26 | v0.2 | T2 확인 포인트에 "초등 모드 질문 1개" 추가 (design §7 초등 지침 점검용) |
 | 2026-10-27 | v0.3 | T3~T7 완료 체크, 대응 design 버전을 v0.9로 갱신(T3~T8 중 design 변경 반영), T8에 조정 항목 기록(존댓말, 감상 첫인상, 퀴즈 문항 품질, requirements 고정, Deploy 숨김, README) |
 | 2026-10-27 | v0.4 | T0 사용자 항목·T8 완료 체크, 대응 문서 버전 갱신(spec v0.3, design v1.0), T8 보완 항목 기록 |
+| 2026-11-17 | v0.5 | T8-1 Streamlit Community Cloud 배포 추가 |
